@@ -26,6 +26,7 @@ class MPDValue(ctypes.Union):
                 ('uval', ctypes.c_uint),
                 ('sval', ctypes.c_char_p),
                 ('fval', ctypes.c_float),
+                ('bval', ctypes.c_bool),
                 ('rval', MPDRange),
                 ('eval', ctypes.POINTER(MPDExpr)),
                 ('cmdval', ctypes.POINTER(MPDCmd))]
