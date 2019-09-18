@@ -38,3 +38,13 @@ class MPDArg(ctypes.Structure):
 MPDCmd._fields_ = [('name', ctypes.c_char_p),
                    ('argc', ctypes.c_size_t),
                    ('argv', ctypes.POINTER(ctypes.POINTER(MPDArg)))]
+
+class MPDVal(object):
+    INT   = 0
+    UINT  = 1
+    STR   = 2
+    FLOAT = 3
+    BOOL  = 4
+    RANGE = 5
+    EXPR  = 6
+    CMD   = 7
