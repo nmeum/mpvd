@@ -16,9 +16,14 @@
       idx (range argc)
       (. (get argv idx) contents)))
 
-  ; TODO
   (defn convert-argument [self arg]
-    arg))
+    (let [t arg.type v arg.v]
+      (cond
+        [(= t ffi.MPDVal.INT) v.ival]
+        [(= t ffi.MPDVal.UINT) v.uval]
+        [(= t ffi.MPDVal.BOOL) v.bval]
+        [True (raise (NotImplementedError
+                     (+ "unknown type " (string t))))]))))
 
 (defn parse-command [string]
   (setv inptr (ctypes.c_char_p))
