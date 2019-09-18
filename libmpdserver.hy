@@ -44,8 +44,7 @@
          (MPDCommand v.cmdval.contents)]
         [(= t ffi.MPDVal.EXPR)
          (raise (NotImplementedError "Expression not implemented yet"))]
-        [True (raise (NotImplementedError
-                     (+ "unknown type " (string t))))]))))
+        [True (raise (TypeError (+ "unknown type " (string t))))]))))
 
 (defn parse-command [string]
   (setv inptr (ctypes.c_char_p))
