@@ -42,6 +42,8 @@
                    (if (= -1 v.rval.end) None v.rval.end))]
         [(= t ffi.MPDVal.CMD)
          (MPDCommand v.cmdval.contents)]
+        [(= t ffi.MPDVal.EXPR)
+         (raise (NotImplementedError "Expression not implemented yet"))]
         [True (raise (NotImplementedError
                      (+ "unknown type " (string t))))]))))
 
