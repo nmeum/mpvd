@@ -21,6 +21,8 @@
       (cond
         [(= t ffi.MPDVal.INT) v.ival]
         [(= t ffi.MPDVal.UINT) v.uval]
+        [(= t ffi.MPDVal.STR) (v.sval.decode)]
+        [(= t ffi.MPDVal.FLOAT) v.fval]
         [(= t ffi.MPDVal.BOOL) v.bval]
         [True (raise (NotImplementedError
                      (+ "unknown type " (string t))))]))))
