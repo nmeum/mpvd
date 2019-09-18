@@ -14,7 +14,7 @@
   (defn argv-list [self argc argv]
     (lfor
       idx (range argc)
-      (get argv idx)))
+      (. (get argv idx) contents)))
 
   ; TODO
   (defn convert-argument [self arg]
