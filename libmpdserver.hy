@@ -24,6 +24,8 @@
         [(= t ffi.MPDVal.STR) (v.sval.decode)]
         [(= t ffi.MPDVal.FLOAT) v.fval]
         [(= t ffi.MPDVal.BOOL) v.bval]
+        [(= t ffi.MPDVal.CMD)
+         (MPDCommand v.cmdval.contents)]
         [True (raise (NotImplementedError
                      (+ "unknown type " (string t))))]))))
 
