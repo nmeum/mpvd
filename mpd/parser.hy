@@ -1,11 +1,11 @@
-(import ffi ctypes)
+(import [mpd.ffi [*]] ctypes)
 (require [hy.contrib.walk [let]])
 
 (setv libmpdserver (ctypes.CDLL "libmpdserver.so"))
 (setv parse libmpdserver.mpd_parse)
-(setv parse.restype (ctypes.POINTER ffi.MPDCmd))
+(setv parse.restype (ctypes.POINTER MPDCmd))
 
-(defclass MPDRange [object]
+(defclass Range [object]
   (defn --init-- [self start &optional end]
     (setv self.start start)
     (setv self.end end))
@@ -15,10 +15,10 @@
 
   (defn to-range [self]
     (if (self.infinite?)
-      (raise (ValueError "MPDRange has infinite length"))
+      (raise (ValueError "Range has infinite length"))
       (range self.start self.end))))
 
-(defclass MPDCommand [object]
+(defclass Command [object]
   (defn --init-- [self cmd]
     (setv self.name (.decode cmd.name))
     (let [args (self.argv-list cmd.argc cmd.argv)]
@@ -32,17 +32,17 @@
   (defn convert-argument [self arg]
     (let [t arg.type v arg.v]
       (cond
-        [(= t ffi.MPDVal.INT) v.ival]
-        [(= t ffi.MPDVal.UINT) v.uval]
-        [(= t ffi.MPDVal.STR) (v.sval.decode)]
-        [(= t ffi.MPDVal.FLOAT) v.fval]
-        [(= t ffi.MPDVal.BOOL) v.bval]
-        [(= t ffi.MPDVal.RANGE)
-         (MPDRange v.rval.start
+        [(= t MPDVal.INT) v.ival]
+        [(= t MPDVal.UINT) v.uval]
+        [(= t MPDVal.STR) (v.sval.decode)]
+        [(= t MPDVal.FLOAT) v.fval]
+        [(= t MPDVal.BOOL) v.bval]
+        [(= t MPDVal.RANGE)
+         (Range v.rval.start
                    (if (= -1 v.rval.end) None v.rval.end))]
-        [(= t ffi.MPDVal.CMD)
-         (MPDCommand v.cmdval.contents)]
-        [(= t ffi.MPDVal.EXPR)
+        [(= t MPDVal.CMD)
+         (Command v.cmdval.contents)]
+        [(= t MPDVal.EXPR)
          (raise (NotImplementedError "Expression not implemented yet"))]
         [True (raise (TypeError (+ "unknown type " (string t))))]))))
 
@@ -51,5 +51,5 @@
   (setv inptr.value (string.encode))
   (let [outptr (parse inptr)]
     (if (bool outptr)
-      (MPDCommand outptr.contents)
+      (Command outptr.contents)
       (raise (ValueError "not a valid MPD command")))))

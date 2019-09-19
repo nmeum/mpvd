@@ -1,5 +1,6 @@
-(import socketserver)
-(import libmpdserver [protocol [commands playback]])
+(import socketserver
+  [mpd.parser [parse-command]]
+  [protocol [commands playback]])
 
 (require [hy.contrib.loop [loop]])
 (require [hy.contrib.walk [let]])
@@ -32,7 +33,7 @@
 (defclass MPDHandler [socketserver.BaseRequestHandler]
   (defn dispatch [self input]
     (try
-      (let [cmd (libmpdserver.parse-command input)]
+      (let [cmd (parse-command input)]
         (commands.call cmd))
       (except [e NotImplementedError]
         (self.request.sendall (.encode "ACK [0@5] {} " + e)))
