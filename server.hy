@@ -3,7 +3,7 @@
 (require [hy.contrib.loop [loop]])
 (require [hy.contrib.walk [let]])
 
-(defclass MPDParser [object]
+(defclass MPDReader [object]
   (defn --init-- [self file]
     (setv self.file file))
 
@@ -29,7 +29,7 @@
 (defclass MPDHandler [socketserver.BaseRequestHandler]
   (defn handle [self]
     (with [file (self.request.makefile)]
-      (for [cmd (iter (MPDParser file) "")]
+      (for [cmd (iter (MPDReader file) "")]
         (print cmd)))))
 
 (with [server (socketserver.TCPServer (, "localhost" 6600) MPDHandler)]
