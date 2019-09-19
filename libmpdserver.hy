@@ -15,7 +15,7 @@
 
   (defn to-range [self]
     (if (self.infinite?)
-      (raise (ValueError "MPDRange has no end"))
+      (raise (ValueError "MPDRange has infinite length"))
       (range self.start self.end))))
 
 (defclass MPDCommand [object]
