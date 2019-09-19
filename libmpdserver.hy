@@ -20,7 +20,7 @@
 
 (defclass MPDCommand [object]
   (defn --init-- [self cmd]
-    (setv self.name cmd.name)
+    (setv self.name (.decode cmd.name))
     (let [args (self.argv-list cmd.argc cmd.argv)]
       (setv self.args (list (map self.convert-argument args)))))
 
