@@ -3,6 +3,8 @@
 (require [hy.contrib.loop [loop]])
 (require [hy.contrib.walk [let]])
 
+(setv MPD_VERSION "0.21.11")
+
 (defclass MPDReader [object]
   (defn --init-- [self file]
     (setv self.file file))
@@ -28,6 +30,7 @@
 
 (defclass MPDHandler [socketserver.BaseRequestHandler]
   (defn handle [self]
+    (self.request.sendall (+ "OK " MPD_VERSION + "\n"))
     (with [file (self.request.makefile)]
       (for [cmd (iter (MPDReader file) "")]
         (print cmd)))))
