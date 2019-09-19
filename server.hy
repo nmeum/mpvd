@@ -30,7 +30,7 @@
 
 (defclass MPDHandler [socketserver.BaseRequestHandler]
   (defn handle [self]
-    (self.request.sendall (+ "OK " MPD_VERSION + "\n"))
+    (self.request.sendall (.encode (% "OK %s\n" MPD_VERSION)))
     (with [file (self.request.makefile)]
       (for [cmd (iter (MPDReader file) "")]
         (print cmd)))))
