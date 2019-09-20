@@ -11,11 +11,11 @@
                                      socket.SOCK_STREAM))
     (self.socket.connect path)
     (setv self.request-id 0)
+    (setv self.socket-lock (threading.Lock))
     (setv self.queue (MSGQueue))
     (setv self.thread (threading.Thread :target self.recv-thread))
     (self.thread.start))
 
-  ;; TODO critical section
   ;; TODO overflow handling?
   (defn get-request-id [self]
     (let [id self.request-id]
@@ -33,7 +33,8 @@
         (self.handle-input input))))
 
   (defn send-command [self name &rest params]
-    (let [rid (self.get-request-id)
-          req (ClientMsg name :args (list params) :id rid)]
-      (self.socket.sendall (req.to-bytes))
-      (self.queue.wait rid))))
+    (with (self.socket-lock)
+      (let [rid (self.get-request-id)
+            req (ClientMsg name :args (list params) :id rid)]
+        (self.socket.sendall (req.to-bytes))
+        (self.queue.wait rid)))))
