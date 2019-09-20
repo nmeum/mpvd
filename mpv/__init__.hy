@@ -10,7 +10,7 @@
     (setv self.socket (socket.socket socket.AF_UNIX
                                      socket.SOCK_STREAM))
     (self.socket.connect path)
-    (setv self.request_id 0)
+    (setv self.request-id 0)
     (setv self.queue (MSGQueue))
     (setv self.thread (threading.Thread :target self.recv-thread))
     (self.thread.start))
@@ -18,8 +18,8 @@
   ;; TODO critical section
   ;; TODO overflow handling?
   (defn get-request-id [self]
-    (let [id self.request_id]
-      (setv self.request_id (inc self.request_id))
+    (let [id self.request-id]
+      (setv self.request-id (inc self.request-id))
       id))
 
   (defn handle-input [self input]
