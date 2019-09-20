@@ -46,6 +46,7 @@
          (raise (NotImplementedError "Expression not implemented yet"))]
         [True (raise (TypeError (+ "unknown type " (string t))))]))))
 
+;; TODO free memory allocated by libmpdserver
 (defn parse-command [string]
   (setv inptr (ctypes.c_char_p))
   (setv inptr.value (string.encode))
