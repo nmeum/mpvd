@@ -1,4 +1,6 @@
-(import socket json threading [mpv.queue [MSGQueue]])
+(import socket json threading
+  [mpv.queue [MSGQueue]]
+  [mpv.response [Message]])
 (require [hy.contrib.walk [let]])
 
 (defclass Connection [object]
@@ -20,11 +22,10 @@
       (setv self.request_id (inc self.request_id))
       id))
 
-  ;; TODO create seperate Response class
   (defn handle-input [self input]
-    (let [dict (json.loads input)
-          rqid (get dict "request_id")]
-      (self.queue.release rqid dict)))
+    (let [msg (Message input)]
+      (unless (msg.event?)
+        (self.queue.release (msg.get-id) msg))))
 
   (defn recv-thread [self]
     (with [file (self.socket.makefile)]
