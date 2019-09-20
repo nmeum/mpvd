@@ -1,6 +1,6 @@
 (import socket json threading
   [mpv.queue [MSGQueue]]
-  [mpv.response [ServerMsg]])
+  [mpv.response [ServerMsg ClientMsg]])
 (require [hy.contrib.walk [let]])
 
 (defclass Connection [object]
@@ -32,10 +32,8 @@
       (for [input (iter file.readline "")]
         (self.handle-input input))))
 
-  ;; TODO create seperate Request class
   (defn send-command [self name &rest params]
-    (let [rqid (self.get-request-id)
-          args (list (map string params))
-          dict {"command" (+ [name] args) "request_id" rqid}]
-      (self.socket.sendall (.encode (+ (json.dumps dict) "\n")))
-      (self.queue.wait rqid))))
+    (let [rid (self.get-request-id)
+          req (ClientMsg name :args (list params) :id rid)]
+      (self.socket.sendall (req.to-bytes))
+      (self.queue.wait rid))))

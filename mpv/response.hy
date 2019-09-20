@@ -1,4 +1,5 @@
 (import json)
+(require [hy.contrib.walk [let]])
 
 (defclass ServerMsg [object]
   (defn --init-- [self input]
@@ -16,3 +17,20 @@
     (if (self.event?)
       False
       (not (= (get self.dict "error") "success")))))
+
+(defclass ClientMsg [object]
+  (defn --init-- [self name &optional [args []] [id None]]
+    (if (and id (not (isinstance id int)))
+      (raise (TypeError "Request ID must be an int")))
+    (setv self.name name)
+    (setv self.args args)
+    (setv self.reqid id))
+
+  (defn to-json [self]
+    (let [dict {"command" (+ [self.name] self.args)}]
+      (json.dumps (if (is self.reqid None)
+                      dict
+                      (do (assoc dict "request_id" self.reqid) dict)))))
+
+  (defn to-bytes [self]
+    (.encode (+ (self.to-json) "\n"))))
