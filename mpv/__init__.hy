@@ -1,6 +1,6 @@
 (import socket json threading
   [mpv.queue [MSGQueue]]
-  [mpv.response [ServerMsg ClientMsg]])
+  [mpv.message [ServerMsg ClientMsg]])
 (require [hy.contrib.walk [let]])
 
 (defclass Connection [object]
