@@ -1,6 +1,6 @@
 (import json)
 
-(defclass Message [object]
+(defclass ServerMsg [object]
   (defn --init-- [self input]
     (setv self.dict (json.loads input)))
 

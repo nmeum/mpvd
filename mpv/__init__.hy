@@ -1,6 +1,6 @@
 (import socket json threading
   [mpv.queue [MSGQueue]]
-  [mpv.response [Message]])
+  [mpv.response [ServerMsg]])
 (require [hy.contrib.walk [let]])
 
 (defclass Connection [object]
@@ -23,7 +23,7 @@
       id))
 
   (defn handle-input [self input]
-    (let [msg (Message input)]
+    (let [msg (ServerMsg input)]
       (unless (msg.event?)
         (self.queue.release (msg.get-id) msg))))
 
