@@ -1,6 +1,8 @@
 (import json)
 (require [hy.contrib.walk [let]])
 
+(setv DELIMITER "\n")
+
 (defclass ServerMsg [object]
   (defn --init-- [self input]
     (setv self.dict (json.loads input)))
@@ -35,4 +37,4 @@
                       (do (assoc dict "request_id" self.reqid) dict)))))
 
   (defn to-bytes [self]
-    (.encode (+ (self.to-json) "\n"))))
+    (.encode (+ (self.to-json) DELIMITER))))
