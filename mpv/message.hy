@@ -8,7 +8,9 @@
   (defn get-id [self]
     (if (self.event?)
       (raise (ValueError "events don't have ids"))
-      (get self.dict "request_id")))
+      (if (in "request_id" self.dict)
+        (get self.dict "request_id")
+        None)))
 
   (defn event? [self]
     (in "event" self.dict))
