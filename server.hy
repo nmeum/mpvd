@@ -3,7 +3,7 @@
   [protocol [commands playback]])
 (require [hy.contrib.walk [let]])
 
-(defclass MPDHandler [socketserver.BaseRequestHandler]
+(defclass Handler [socketserver.BaseRequestHandler]
   (defn dispatch [self input]
     (try
       (let [cmd (parse-command input)]
@@ -19,5 +19,5 @@
       (for [input (iter (mpd.util.Reader file) "")]
         (self.dispatch input)))))
 
-(with [server (socketserver.TCPServer (, "localhost" 6600) MPDHandler)]
+(with [server (socketserver.TCPServer (, "localhost" 6600) Handler)]
       (server.serve-forever))
