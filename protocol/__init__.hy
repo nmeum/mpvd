@@ -10,9 +10,9 @@
           (assoc self.handlers name func)
           func))))
 
-  (defn call [self cmd]
+  (defn call [self mpv cmd]
     (if (in cmd.name self.handlers)
-      ((get self.handlers cmd.name) cmd.args)
+      ((get self.handlers cmd.name) mpv cmd.args)
       (raise (NotImplementedError (% "%s has not ben implemented" cmd.name))))))
 
 (setv commands (Commands))
