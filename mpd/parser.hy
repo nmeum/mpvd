@@ -4,6 +4,7 @@
 (setv libmpdserver (ctypes.CDLL "libmpdserver.so"))
 (setv parse libmpdserver.mpd_parse)
 (setv parse.restype (ctypes.POINTER MPDCmd))
+(setv freecmd libmpdserver.mpd_free_command)
 
 (defclass Range [object]
   (defn --init-- [self start &optional end]
@@ -46,11 +47,12 @@
          (raise (NotImplementedError "Expression not implemented yet"))]
         [True (raise (TypeError (+ "unknown type " (string t))))]))))
 
-;; TODO free memory allocated by libmpdserver
 (defn parse-command [string]
   (setv inptr (ctypes.c_char_p))
   (setv inptr.value (string.encode))
   (let [outptr (parse inptr)]
     (if (bool outptr)
-      (Command outptr.contents)
+      (let [cmd (Command outptr.contents)]
+        (freecmd outptr)
+        cmd)
       (raise (ValueError "not a valid MPD command")))))
