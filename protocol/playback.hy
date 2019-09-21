@@ -2,4 +2,4 @@
 
 (with-decorator (commands.add "pause")
   (defn pause [mpv cmd]
-    (print "pause")))
+    (mpv.send-command "set_property" "pause" True)))
