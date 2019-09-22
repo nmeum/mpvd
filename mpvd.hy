@@ -4,7 +4,7 @@
 (require [hy.contrib.walk [let]])
 
 (defclass Server [socketserver.ThreadingTCPServer]
-  (defn __init__ [self addr handler mpv-conn]
+  (defn --init-- [self addr handler mpv-conn]
     (.--init-- socketserver.ThreadingTCPServer self addr handler)
     (setv self.mpv mpv-conn)))
 
@@ -55,6 +55,6 @@
       :default 6600 :help "TCP port used by the MPD server")
     (parser.add-argument "-a" :type string :metavar "ADDR"
       :default "localhost" :help "Address the MPD server binds to")
-    (let [args (parser.parse_args)]
+    (let [args (parser.parse-args)]
       (start-server args.a args.p args.PATH)))
   0)
