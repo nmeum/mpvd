@@ -33,6 +33,8 @@
         (self.handle-input input))))
 
   (defn send-command [self name &rest params]
+    (unless (isinstance name str)
+      (raise (TypeError "command name must be a string")))
     (with (self.socket-lock)
       (let [rid (self.get-request-id)
             req (ClientMsg name :args (list params) :id rid)]
