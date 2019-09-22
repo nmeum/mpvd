@@ -16,6 +16,10 @@
     (setv self.thread (threading.Thread :target self.recv-thread))
     (self.thread.start))
 
+  (defn shutdown [self]
+    (self.socket.shutdown socket.SHUT_RD)
+    (.join self.thread))
+
   ;; TODO overflow handling?
   (defn get-request-id [self]
     (let [id self.request-id]
