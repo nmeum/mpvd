@@ -1,29 +1,7 @@
-(import argparse socketserver mpv mpd threading signal
-  [mpd.parser [parse-command]]
+(import argparse mpv mpd threading signal
+  [mpd.server [Server]]
   [protocol [commands playback]])
 (require [hy.contrib.walk [let]])
-
-(defclass Server [socketserver.ThreadingTCPServer]
-  (defn --init-- [self addr handler mpv-conn]
-    (.--init-- socketserver.ThreadingTCPServer self addr handler)
-    (setv self.daemon_threads True)
-    (setv self.mpv mpv-conn)))
-
-(defclass Handler [socketserver.BaseRequestHandler]
-  (defn dispatch [self input]
-    (try
-      (let [cmd (parse-command input)]
-        (commands.call self.server.mpv cmd))
-      (except [e NotImplementedError]
-        (self.request.sendall (.encode "ACK [0@5] {} " + e)))
-      (except [ValueError]
-        (self.request.sendall (.encode "ACK [0@5] {} syntax error")))))
-
-  (defn handle [self]
-    (self.request.sendall (.encode (% "OK %s\n" mpd.VERSION)))
-    (with [file (self.request.makefile)]
-      (for [input (iter (mpd.util.Reader file) "")]
-        (self.dispatch input)))))
 
 ;; The socketserver needs to be closed from a different. This thread
 ;; blocks until a signal is received and closes both the mpv connection
@@ -42,9 +20,10 @@
     (self.server.shutdown)
     (self.mpv.shutdown)))
 
-(defn start-server [addr port mpv-ipc]
-  (let [mpv-conn (mpv.Connection mpv-ipc)]
-    (with [server (Server (, addr port) Handler mpv-conn)]
+(defn start-server [addr port path]
+  (let [mpv-conn (mpv.Connection path)
+        handler  (fn [cmd] (commands.call mpv-conn cmd))]
+    (with [server (Server (, addr port) handler)]
       (.start (CleanupThread server mpv-conn))
       (server.serve-forever))))
 
