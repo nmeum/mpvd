@@ -25,20 +25,22 @@
         (self.dispatch input)))))
 
 (defclass CleanupThread [threading.Thread]
-  (defn --init-- [self socket-server lock]
+  (defn --init-- [self socket-server mpv lock]
     (setv self.server socket-server)
+    (setv self.mpv mpv)
     (setv self.lock lock)
     (.--init-- threading.Thread self))
 
   (defn run [self]
     (self.lock.acquire)
-    (self.server.shutdown)))
+    (self.server.shutdown)
+    (self.mpv.shutdown)))
 
 (defn start-server [addr port mpv-ipc]
   (let [mpv-conn (mpv.Connection mpv-ipc)
        lock      (threading.Semaphore 0)]
     (with [server (Server (, addr port) Handler mpv-conn)]
-      (.start (CleanupThread server lock))
+      (.start (CleanupThread server mpv-conn lock))
       (signal.signal signal.SIGINT (fn [signal frame] (lock.release)))
       (server.serve-forever))))
 
