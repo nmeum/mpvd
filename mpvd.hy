@@ -1,4 +1,4 @@
-(import argparse socketserver mpv mpd
+(import argparse socketserver mpv mpd threading signal
   [mpd.parser [parse-command]]
   [protocol [commands playback]])
 (require [hy.contrib.walk [let]])
@@ -24,9 +24,22 @@
       (for [input (iter (mpd.util.Reader file) "")]
         (self.dispatch input)))))
 
+(defclass CleanupThread [threading.Thread]
+  (defn --init-- [self socket-server lock]
+    (setv self.server socket-server)
+    (setv self.lock lock)
+    (.--init-- threading.Thread self))
+
+  (defn run [self]
+    (self.lock.acquire)
+    (self.server.shutdown)))
+
 (defn start-server [addr port mpv-ipc]
-  (let [mpv-conn (mpv.Connection mpv-ipc)]
+  (let [mpv-conn (mpv.Connection mpv-ipc)
+       lock      (threading.Semaphore 0)]
     (with [server (Server (, addr port) Handler mpv-conn)]
+      (.start (CleanupThread server lock))
+      (signal.signal signal.SIGINT (fn [signal frame] (lock.release)))
       (server.serve-forever))))
 
 (defmain [&rest args]
