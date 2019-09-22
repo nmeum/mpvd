@@ -6,6 +6,7 @@
 (defclass Server [socketserver.ThreadingTCPServer]
   (defn --init-- [self addr handler mpv-conn]
     (.--init-- socketserver.ThreadingTCPServer self addr handler)
+    (setv self.daemon_threads True)
     (setv self.mpv mpv-conn)))
 
 (defclass Handler [socketserver.BaseRequestHandler]
