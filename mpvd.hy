@@ -24,11 +24,16 @@
       (for [input (iter (mpd.util.Reader file) "")]
         (self.dispatch input)))))
 
+;; The socketserver needs to be closed from a different. This thread
+;; blocks until a signal is received and closes both the mpv connection
+;; and the socket server.
 (defclass CleanupThread [threading.Thread]
-  (defn --init-- [self socket-server mpv lock]
+  (defn --init-- [self socket-server mpv]
     (setv self.server socket-server)
     (setv self.mpv mpv)
-    (setv self.lock lock)
+    (setv self.lock (threading.Semaphore 0))
+    (signal.signal signal.SIGINT
+      (fn [signal frame] (self.lock.release)))
     (.--init-- threading.Thread self))
 
   (defn run [self]
@@ -37,11 +42,9 @@
     (self.mpv.shutdown)))
 
 (defn start-server [addr port mpv-ipc]
-  (let [mpv-conn (mpv.Connection mpv-ipc)
-       lock      (threading.Semaphore 0)]
+  (let [mpv-conn (mpv.Connection mpv-ipc)]
     (with [server (Server (, addr port) Handler mpv-conn)]
-      (.start (CleanupThread server mpv-conn lock))
-      (signal.signal signal.SIGINT (fn [signal frame] (lock.release)))
+      (.start (CleanupThread server mpv-conn))
       (server.serve-forever))))
 
 (defmain [&rest args]
