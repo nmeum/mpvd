@@ -1,19 +1,37 @@
 (import mpd socketserver
+  [mpd.exceptions [*]]
   [mpd.parser [parse-command]])
 (require [hy.contrib.walk [let]])
 
 (defclass Handler [socketserver.BaseRequestHandler]
+  (defn send-resp [self resp]
+    (self.request.sendall (.encode (+ (str resp) mpd.DELIMITER))))
+
+  (defn dispatch-single [self cmd]
+    (self.server.callable cmd))
+
+  (defn dispatch-list [self list]
+    (for [cmd list.args]
+      (let [resp (self.dispatch-single cmd)]
+        (if (= list.name "command_list_ok_begin"))
+          (self.send-resp "list_OK"))))
+
   (defn dispatch [self input]
     (try
-      (let [cmd (parse-command input)]
-        (self.server.callable cmd))
+      (setv cmd (parse-command input))
       (except [ValueError]
-        (self.request.sendall (.encode "ACK [0@5] {} syntax error")))
-      (except [e Exception]
-        (self.request.sendall (.encode "ACK [0@5] {} " + str(e))))))
+        (self.send-resp (MPDException ACKError.UNKNOWN "syntax error"))
+        (return)))
+    (try
+      (if (cmd.list?)
+        (self.dispatch-list cmd)
+        (self.dispatch-single cmd))
+      (except [e MPDException]
+        (self.send-resp e))
+      (else (self.send-resp "OK"))))
 
   (defn handle [self]
-    (self.request.sendall (.encode (% "OK %s\n" mpd.VERSION)))
+    (self.send-resp (% "OK %s" mpd.VERSION))
     (with [file (self.request.makefile)]
       (for [input (iter (mpd.util.Reader file) "")]
         (self.dispatch input)))))
