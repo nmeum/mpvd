@@ -39,6 +39,7 @@ MPDCmd._fields_ = [('name', ctypes.c_char_p),
                    ('argc', ctypes.c_size_t),
                    ('argv', ctypes.POINTER(ctypes.POINTER(MPDArg)))]
 
+# TODO: Use python3 enum
 class MPDVal(object):
     INT   = 0
     UINT  = 1
