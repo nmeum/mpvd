@@ -25,6 +25,10 @@
     (let [args (self.argv-list cmd.argc cmd.argv)]
       (setv self.args (list (map self.convert-argument args)))))
 
+  (defn list? [self]
+    (or (= self.name "command_list_begin")
+        (= self.name "command_list_ok_begin")))
+
   (defn argv-list [self argc argv]
     (lfor
       idx (range argc)
