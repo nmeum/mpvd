@@ -5,21 +5,21 @@
   (defn --init-- [self file]
     (setv self.file file))
 
-  (defn is-list-start [self line]
+  (defn is-list-start? [self line]
     (or (= line "command_list_begin\n")
         (= line "command_list_ok_begin\n")))
 
-  (defn is-list-end [self line]
+  (defn is-list-end? [self line]
     (= line "command_list_end\n"))
 
   (defn --call-- [self]
     (loop [[str ""] [list False]]
       (let [line (self.file.readline)]
         (cond
-          [(self.is-list-start line)
+          [(self.is-list-start? line)
            (recur (+ str line) True)]
           [list
-           (if (self.is-list-end line)
+           (if (self.is-list-end? line)
              (+ str line)
              (recur (+ str line) list))]
           [True line])))))
