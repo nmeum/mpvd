@@ -3,9 +3,9 @@
   [protocol [commands playback]])
 (require [hy.contrib.walk [let]])
 
-;; The socketserver needs to be closed from a different. This thread
-;; blocks until a signal is received and closes both the mpv connection
-;; and the socket server.
+;; The socketserver needs to be closed from a different thread. This
+;; thread blocks until a signal is received and closes both the mpv
+;; connection and the socket server.
 (defclass CleanupThread [threading.Thread]
   (defn --init-- [self socket-server mpv]
     (setv self.server socket-server)
