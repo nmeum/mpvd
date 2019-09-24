@@ -31,7 +31,7 @@
       (else (self.send-resp "OK"))))
 
   (defn handle [self]
-    (self.send-resp (% "OK %s" mpd.VERSION))
+    (self.send-resp (% "OK MPD %s" mpd.VERSION))
     (with [file (self.request.makefile)]
       (for [input (iter (mpd.util.Reader file) "")]
         (self.dispatch input)))))
