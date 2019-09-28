@@ -12,10 +12,10 @@
       (if resp (self.send-resp resp))))
 
   (defn dispatch-list [self list]
+    (setv ok-list? (= list.name "command_list_ok_begin"))
     (for [cmd list.args]
       (self.dispatch-single cmd)
-        (if (= list.name "command_list_ok_begin"))
-          (self.send-resp "list_OK")))
+      (if ok-list? (self.send-resp "list_OK"))))
 
   (defn dispatch [self input]
     (try
