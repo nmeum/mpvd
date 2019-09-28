@@ -33,6 +33,8 @@
 
 (with-decorator (commands.add "currentsong")
   (defn current-song [mpv cmd]
+    ;; TODO: This is a pontential race condition since the current song
+    ;; might change between the various commands.
     (let [resp (mpv.send-command "get_property" "metadata")
           pos  (mpv.send-command "get_property" "playlist-pos")
           file (mpv.send-command "get_property" "path")]
