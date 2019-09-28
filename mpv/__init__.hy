@@ -6,8 +6,6 @@
 (defclass MPVException [Exception])
 
 (defclass Connection [object]
-  ;; TODO pass socket instead of path
-  ;; TODO stop thread somehow
   (defn --init-- [self path]
     (setv self.socket (socket.socket socket.AF_UNIX
                                      socket.SOCK_STREAM))
