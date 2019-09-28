@@ -9,7 +9,7 @@ Setup [libmpdserver][libmpdserver github] using:
 	$ git clone --recursive https://github.com/nmeum/libmpdserver
 	$ make -C libmpdserver libmpdserver.so
 
-Install [hy][hy homepage] and mpv, start mpv using:
+Install [hy][hy homepage] and [mpv][mpv homepage], start mpv using:
 
 	$ mpv --input-ipc-server=/tmp/mpvsock some-file.opus
 
