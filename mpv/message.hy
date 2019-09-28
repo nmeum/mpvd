@@ -14,6 +14,11 @@
         (get self.dict "request_id")
         None)))
 
+  (defn get-data [self]
+    (if (self.event?)
+      (raise (ValueError "events don't have data"))
+      (get self.dict "data")))
+
   (defn event? [self]
     (in "event" self.dict))
 
