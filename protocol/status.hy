@@ -18,11 +18,14 @@
     "album_artist" "AlbumArtist"
   }]
 
-  (defn __init__ [self resp]
-    (setv self.data resp))
+  (defn __init__ [self resp &optional [tags {}]]
+    (setv self.data resp)
+    (setv self.base-tags [])
+    (for [tag (.items tags)]
+      (self.base-tags.append (tag->str tag))))
 
   (defn __str__ [self]
-    (setv tags [])
+    (setv tags self.base-tags)
     (for [(, key value) (.items self.data)]
       (if (in key self.tag-names)
         (tags.append (tag->str (, (get self.tag-names key) value)))))
@@ -30,5 +33,6 @@
 
 (with-decorator (commands.add "currentsong")
   (defn current-song [mpv cmd]
-    (let [resp (mpv.send-command "get_property" "metadata")]
-      (CurrentSong resp))))
+    (let [resp (mpv.send-command "get_property" "metadata")
+          pos  (mpv.send-command "get_property" "playlist-pos")]
+      (CurrentSong resp {"Pos" pos}))))
