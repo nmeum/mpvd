@@ -1,6 +1,6 @@
 (import argparse mpv mpd threading signal
   [mpd.server [Server]]
-  [protocol [commands playback]])
+  [protocol [commands playback status]])
 (require [hy.contrib.walk [let]])
 
 ;; The socketserver needs to be closed from a different thread. This
