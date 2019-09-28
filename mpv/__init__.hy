@@ -46,4 +46,4 @@
         (let [resp (self.queue.wait rid)]
           (if (resp.error?)
             (raise (MPVException (get resp.dict "error")))
-            resp))))))
+            (resp.get-data)))))))

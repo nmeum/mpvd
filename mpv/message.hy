@@ -17,7 +17,9 @@
   (defn get-data [self]
     (if (self.event?)
       (raise (ValueError "events don't have data"))
-      (get self.dict "data")))
+      (if (in "data" self.dict)
+        (get self.dict "data")
+        None)))
 
   (defn event? [self]
     (in "event" self.dict))
