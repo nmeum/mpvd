@@ -2,6 +2,9 @@
   [protocol [commands]])
 (require [hy.contrib.walk [let]])
 
+(defn tag->str [tag]
+  (% "%s: %s" tag))
+
 (defclass CurrentSong [object]
   ;; Mapping of MPV tag names to MPD tag names.
   ;; See: src/tag/Names.c in MPD source.
@@ -22,7 +25,7 @@
     (setv tags [])
     (for [(, key value) (.items self.data)]
       (if (in key self.tag-names)
-        (tags.append (% "%s: %s" (, (get self.tag-names key) value)))))
+        (tags.append (tag->str (, (get self.tag-names key) value)))))
     (.join "\n" tags)))
 
 (with-decorator (commands.add "currentsong")
