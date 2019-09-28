@@ -3,6 +3,8 @@
   [mpv.message [ServerMsg ClientMsg]])
 (require [hy.contrib.walk [let]])
 
+(defclass MPVException [Exception])
+
 (defclass Connection [object]
   ;; TODO pass socket instead of path
   ;; TODO stop thread somehow
@@ -43,4 +45,7 @@
       (let [rid (self.get-request-id)
             req (ClientMsg name :args (list params) :id rid)]
         (self.socket.sendall (req.to-bytes))
-        (self.queue.wait rid)))))
+        (let [resp (self.queue.wait rid)]
+          (if (resp.error?)
+            (raise (MPVException (get resp.dict "error")))
+            resp))))))
