@@ -8,13 +8,14 @@
     (self.request.sendall (.encode (+ (str resp) mpd.DELIMITER))))
 
   (defn dispatch-single [self cmd]
-    (self.server.callable cmd))
+    (let [resp (self.server.callable cmd)]
+      (if resp (self.send-resp resp))))
 
   (defn dispatch-list [self list]
     (for [cmd list.args]
-      (let [resp (self.dispatch-single cmd)]
+      (self.dispatch-single cmd)
         (if (= list.name "command_list_ok_begin"))
-          (self.send-resp "list_OK"))))
+          (self.send-resp "list_OK")))
 
   (defn dispatch [self input]
     (try
