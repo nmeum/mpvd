@@ -1,4 +1,5 @@
 (import socket json threading
+  [mpv.event [PropertyHandler]]
   [mpv.queue [MSGQueue]]
   [mpv.message [ServerMsg ClientMsg]])
 (require [hy.contrib.walk [let]])
@@ -14,7 +15,8 @@
     (setv self.socket-lock (threading.Lock))
     (setv self.queue (MSGQueue))
     (setv self.thread (threading.Thread :target self.recv-thread))
-    (self.thread.start))
+    (self.thread.start)
+    (setv self.event-handler (PropertyHandler self)))
 
   (defn shutdown [self]
     (self.socket.shutdown socket.SHUT_RD)
@@ -28,7 +30,8 @@
 
   (defn handle-input [self input]
     (let [msg (ServerMsg input)]
-      (unless (msg.event?)
+      (if (msg.event?)
+        (.handle self.event-handler msg)
         (self.queue.release (msg.get-id) msg))))
 
   (defn recv-thread [self]
@@ -46,4 +49,7 @@
         (let [resp (self.queue.wait rid)]
           (if (resp.error?)
             (raise (MPVException (get resp.dict "error")))
-            (resp.get-data)))))))
+            (resp.get-data))))))
+
+  (defn observe-property [self name callable]
+    (.observe-property self.event-handler name callable)))
