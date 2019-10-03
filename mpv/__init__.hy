@@ -1,5 +1,4 @@
 (import socket json threading
-  [mpv.event [PropertyHandler]]
   [mpv.queue [MSGQueue]]
   [mpv.message [ServerMsg ClientMsg]])
 (require [hy.contrib.walk [let]])
@@ -11,12 +10,15 @@
     (setv self.socket (socket.socket socket.AF_UNIX
                                      socket.SOCK_STREAM))
     (self.socket.connect path)
+    (setv self.event-handlers {"property-change" self.handle-property})
+    (setv self.property-handlers {})
+    (setv self.observe-id 1)
+    (setv self.observe-lock (threading.Lock))
     (setv self.request-id 0)
     (setv self.socket-lock (threading.Lock))
     (setv self.queue (MSGQueue))
     (setv self.thread (threading.Thread :target self.recv-thread))
-    (self.thread.start)
-    (setv self.event-handler (PropertyHandler self)))
+    (self.thread.start))
 
   (defn shutdown [self]
     (self.socket.shutdown socket.SHUT_RD)
@@ -28,10 +30,19 @@
       (setv self.request-id (inc self.request-id))
       id))
 
+  (defn handle-property [self msg]
+    ((get self.property-handlers (get msg.dict "id"))
+                                 (msg.get-data)))
+
+  (defn handle-event [self msg]
+    (let [name (get msg.dict "event")]
+      (if (in name self.event-handlers)
+        ((get self.event-handlers name) msg))))
+
   (defn handle-input [self input]
     (let [msg (ServerMsg input)]
       (if (msg.event?)
-        (.handle self.event-handler msg)
+        (self.handle-event msg)
         (self.queue.release (msg.get-id) msg))))
 
   (defn recv-thread [self]
@@ -52,4 +63,15 @@
             (resp.get-data))))))
 
   (defn observe-property [self name callable]
-    (.observe-property self.event-handler name callable)))
+    (unless (isinstance name str)
+      (raise (TypeError "name must be a string")))
+    (with (self.observe-lock)
+        (setv id self.observe-id)
+        (setv self.observe-id (inc id))
+        (assoc self.property-handlers id callable))
+    (self.send-command "observe_property" id name)
+    id)
+
+  (defn unobserve-property [self id]
+    (self.send-command "unobserve_property" id)
+    (del (get self.property-handlers id))))
