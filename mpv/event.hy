@@ -1,4 +1,4 @@
-(import [threading [Lock]])
+(import [threading [Lock]] [collections [defaultdict]])
 (require [hy.contrib.walk [let]])
 
 (defclass EventHandler [object]
@@ -19,7 +19,7 @@
 
 (defclass PropertyHandler [EventHandler]
   (defn --init-- [self conn]
-    (setv self.property-handlers {})
+    (setv self.property-handlers (defaultdict list))
     (setv self.observe-id 0)
     (setv self.observe-lock (Lock))
     (setv self.conn conn)
@@ -36,10 +36,10 @@
   (defn observe-property [self name callable]
     (unless (isinstance name str)
       (raise (TypeError "name must be a string")))
-    (assoc self.property-handlers name callable)
+    (.append (get self.property-handlers name) callable)
     (self.conn.send-command "observe_property" (self.get-observe-id) name))
 
   (defn handle-change [self msg]
     (let [name (get msg.dict "name")]
-      (if (in name self.property-handlers)
-        ((get self.property-handlers name) (msg.get-data))))))
+      (for [h (get self.property-handlers name)]
+        (h (msg.get-data))))))
