@@ -1,6 +1,9 @@
 (import [threading [Lock]] [collections [defaultdict]])
 (require [hy.contrib.walk [let]])
 
+;; TODO inherit from Connection class
+;; TODO allow multiple handlers for same event
+;; TODO allow removnig handlers
 (defclass EventHandler [object]
   (defn --init-- [self]
     (setv self.handlers {}))
@@ -17,6 +20,7 @@
       (if (in name self.handlers)
         ((get self.handlers name) msg)))))
 
+;; TODO make unobserving properties possible
 (defclass PropertyHandler [EventHandler]
   (defn --init-- [self conn]
     (setv self.property-handlers (defaultdict list))
