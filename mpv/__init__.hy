@@ -5,6 +5,8 @@
 
 (defclass MPVException [Exception])
 
+;; TODO make this resemble the mpv lua api
+;; See: https://mpv.io/manual/master/#mp-functions
 (defclass Connection [object]
   (defn --init-- [self path]
     (setv self.socket (socket.socket socket.AF_UNIX
