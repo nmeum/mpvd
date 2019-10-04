@@ -1,15 +1,11 @@
-(import [mpv.message [DELIMITER]]
+(import mpd [mpv.message [DELIMITER]]
   [mpv.util [same-song]]
   [protocol [commands]])
 (require [hy.contrib.walk [let]])
 
-(defn tag->str [tag]
-  (% "%s: %s" tag))
-
-(defclass CurrentSong [object]
-  ;; Mapping of MPV tag names to MPD tag names.
-  ;; See: src/tag/Names.c in MPD source.
-  [tag-names {
+;; Mapping of MPV tag names to MPD tag names.
+;; See: src/tag/Names.c in MPD source.
+(setv MPD-TAG-NAMES {
     "title"        "Title"
     "artist"       "Artist"
     "album"        "Album"
@@ -17,27 +13,30 @@
     "track"        "Track"
     "disc"         "Disc"
     "album_artist" "AlbumArtist"
-  }]
+  })
 
-  (defn __init__ [self resp &optional [tags {}]]
-    (setv self.data resp)
-    (setv self.base-tags [])
-    (for [tag (.items tags)]
-      (self.base-tags.append (tag->str tag))))
+(defn convert-metadata [metadata]
+  (reduce (fn [dict key]
+            (if (in key MPD-TAG-NAMES)
+              (assoc dict (get MPD-TAG-NAMES key) (get metadata key)))
+            dict)
+          metadata {}))
 
-  (defn __str__ [self]
-    (setv tags self.base-tags)
-    (for [(, key value) (.items self.data)]
-      (if (in key self.tag-names)
-        (tags.append (tag->str (, (get self.tag-names key) value)))))
-    (.join "\n" tags)))
+(defn dict->mpdstr [dict]
+  (.rstrip (reduce (fn [rest key]
+                     (+ rest
+                        (% "%s: %s" (, key (get dict key)))
+                        mpd.DELIMITER))
+                    dict "") mpd.DELIMITER))
 
 (with-decorator (commands.add "currentsong")
   (defn current-song [mpv cmd]
     (with [(same-song mpv)]
-      (let [resp (mpv.get-property "metadata")
+      (let [meta (mpv.get-property "metadata")
             len  (mpv.get-property "duration")
             pos  (mpv.get-property "playlist-pos")
             file (mpv.get-property "path")]
         ;; See https://github.com/MusicPlayerDaemon/MPD/blob/d663f81/src/SongPrint.cxx#L82
-        (CurrentSong resp {"file" file "Pos" pos "duration" len})))))
+        (setv resp {"file" file "Pos" pos "duration" len})
+        (.update resp (convert-metadata meta))
+        (dict->mpdstr resp)))))
