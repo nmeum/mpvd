@@ -39,4 +39,5 @@
             len  (mpv.get-property "duration")
             pos  (mpv.get-property "playlist-pos")
             file (mpv.get-property "path")]
+        ;; See https://github.com/MusicPlayerDaemon/MPD/blob/d663f81/src/SongPrint.cxx#L82
         (CurrentSong resp {"file" file "Pos" pos "duration" len})))))
