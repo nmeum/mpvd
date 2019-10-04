@@ -35,8 +35,8 @@
 (with-decorator (commands.add "currentsong")
   (defn current-song [mpv cmd]
     (with [(same-song mpv)]
-      (let [resp (mpv.send-command "get_property" "metadata")
-            len  (mpv.send-command "get_property" "duration")
-            pos  (mpv.send-command "get_property" "playlist-pos")
-            file (mpv.send-command "get_property" "path")]
+      (let [resp (mpv.get-property "metadata")
+            len  (mpv.get-property "duration")
+            pos  (mpv.get-property "playlist-pos")
+            file (mpv.get-property "path")]
         (CurrentSong resp {"file" file "Pos" pos "duration" len})))))

@@ -72,6 +72,12 @@
     (self.send-command "observe_property" id name)
     id)
 
+  (defn get-property [self name]
+    (self.send-command "get_property" name))
+
+  (defn set-property [self name value]
+    (self.send-command "set_property" name value))
+
   (defn unobserve-property [self id]
     (self.send-command "unobserve_property" id)
     (del (get self.property-handlers id))))
