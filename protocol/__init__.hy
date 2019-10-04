@@ -15,7 +15,7 @@
     (setv dict (self.convert-dict dict))
     (.rstrip (reduce (fn [rest key]
                        (+ rest
-                          (% "%s: %s" (, key (get dict key)))
+                          (.format "{}: {}" key (get dict key))
                           mpd.DELIMITER))
                       dict "") mpd.DELIMITER))
 
