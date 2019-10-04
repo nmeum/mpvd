@@ -12,3 +12,6 @@
           (setv invoked False)
           (break)))
       (conn.unobserve-property id))))
+
+(defn same-song [conn]
+  (same-property conn "path"))
