@@ -4,7 +4,7 @@
 (with-decorator contextmanager
   (defn same-property [conn property]
     (setv invoked False)
-    (let [handler (fn [x] (setv invoked True))
+    (let [handler (fn [_] (setv invoked True))
           id      (conn.observe-property property handler)]
       (while True
         (yield)
