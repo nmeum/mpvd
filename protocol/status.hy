@@ -22,13 +22,6 @@
             dict)
           metadata {}))
 
-(defn dict->mpdstr [dict]
-  (.rstrip (reduce (fn [rest key]
-                     (+ rest
-                        (% "%s: %s" (, key (get dict key)))
-                        mpd.DELIMITER))
-                    dict "") mpd.DELIMITER))
-
 (with-decorator (commands.add "currentsong")
   (defn current-song [mpv cmd]
     (with [(same-song mpv)]
@@ -39,4 +32,4 @@
         ;; See https://github.com/MusicPlayerDaemon/MPD/blob/d663f81/src/SongPrint.cxx#L82
         (setv resp {"file" file "Pos" pos "duration" len})
         (.update resp (convert-metadata meta))
-        (dict->mpdstr resp)))))
+        resp))))
