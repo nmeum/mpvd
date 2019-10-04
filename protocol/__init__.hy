@@ -5,7 +5,14 @@
   (defn --init-- [self]
     (setv self.handlers {}))
 
+  (defn convert-dict [self dict]
+    (dfor (, key value) (.items dict)
+      [key (if (isinstance value bool)
+             (if value 1 0)
+             value)]))
+
   (defn dict->mpdstr [self dict]
+    (setv dict (self.convert-dict dict))
     (.rstrip (reduce (fn [rest key]
                        (+ rest
                           (% "%s: %s" (, key (get dict key)))
