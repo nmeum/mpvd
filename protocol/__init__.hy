@@ -12,12 +12,11 @@
              value)]))
 
   (defn dict->mpdstr [self dict]
-    (setv dict (self.convert-dict dict))
-    (.rstrip (reduce (fn [rest key]
+    (.rstrip (reduce (fn [rest pair]
                        (+ rest
-                          (.format "{}: {}" key (get dict key))
+                          (.format "{}: {}" (first pair) (last pair))
                           mpd.DELIMITER))
-                      dict "") mpd.DELIMITER))
+                      (.items (self.convert-dict dict)) "") mpd.DELIMITER))
 
   (defn add [self name]
     (fn [func]
