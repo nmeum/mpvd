@@ -37,6 +37,6 @@
   (defn status [mpv cmd]
     (with [(same-song mpv)]
       ;; See https://github.com/MusicPlayerDaemon/MPD/blob/d663f81/src/command/PlayerCommands.cxx#L110
-      (let [volume  (mpv.get-property "ao-volume")
+      (let [volume  (mpv.get-property "volume")
             shuffle (mpv.get-property "options/shuffle")]
         {"volume" volume "random" shuffle}))))
