@@ -25,10 +25,18 @@
 (with-decorator (commands.add "currentsong")
   (defn current-song [mpv cmd]
     (with [(same-song mpv)]
+      ;; See https://github.com/MusicPlayerDaemon/MPD/blob/d663f81/src/SongPrint.cxx#L82
       (let [meta (mpv.get-property "metadata")
             len  (mpv.get-property "duration")
             pos  (mpv.get-property "playlist-pos")
             file (mpv.get-property "path")]
-        ;; See https://github.com/MusicPlayerDaemon/MPD/blob/d663f81/src/SongPrint.cxx#L82
         {#** {"file" file "Pos" pos "duration" len}
          #** (convert-metadata meta)}))))
+
+(with-decorator (commands.add "status")
+  (defn status [mpv cmd]
+    (with [(same-song mpv)]
+      ;; See https://github.com/MusicPlayerDaemon/MPD/blob/d663f81/src/command/PlayerCommands.cxx#L110
+      (let [volume  (mpv.get-property "ao-volume")
+            shuffle (mpv.get-property "options/shuffle")]
+        {"volume" volume "random" shuffle}))))
