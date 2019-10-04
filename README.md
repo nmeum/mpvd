@@ -26,13 +26,12 @@ Afterwards, start mpvd using:
 
 ## Usage
 
-Since the `status` and `currentsong` command are not implemented
-correctly at the moment most mpd clients (even `mpc`) won't do a thing.
+Very simple interactions with `mpc` are possible, for example:
 
-Interacting with the server through netcat works though, for example:
-
-	$ printf "command_list_begin\ncurrentsong\npause\ncommand_list_end\n" | \
-		nc localhost 6600
+	$ mpc --host localhost --port 6600
+	OpenBSD - Trial of the BSD Knights
+	[paused]  #0/1   0:00/0:00 (0%)
+	volume:100%   repeat: off   random: off   single: off   consume: off
 
 ## License
 
