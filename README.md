@@ -24,6 +24,16 @@ Afterwards, start mpvd using:
 	$ export LD_LIBRARY_PATH="<PATH TO LIBMPDSERVER REPOSITORY>"
 	$ hy mpvd.hy /tmp/mpvsock
 
+## Usage
+
+Since the `status` and `currentsong` command are not implemented
+correctly at the moment most mpd clients (even `mpc`) won't do a thing.
+
+Interacting with the server through netcat works though, for example:
+
+	$ printf "command_list_begin\ncurrentsong\npause\ncommand_list_end\n" | \
+		nc localhost 6600
+
 ## License
 
 This program is free software: you can redistribute it and/or modify it
