@@ -14,12 +14,17 @@
     "album_artist" "AlbumArtist"
   })
 
+(defn lowercase-metadata [metadata]
+  (dict (map (fn [tag]
+               (, (.lower (first tag)) (last tag)))
+             (.items metadata))))
+
 (defn convert-metadata [metadata]
-  (reduce (fn [dict key]
-            (if (in key MPD-TAG-NAMES)
-              (assoc dict (get MPD-TAG-NAMES key) (get metadata key)))
+  (reduce (fn [dict pair]
+            (if (in (first pair) MPD-TAG-NAMES)
+              (assoc dict (get MPD-TAG-NAMES (first pair)) (last pair)))
             dict)
-          metadata {}))
+          (.items (lowercase-metadata metadata)) {}))
 
 ;; See https://github.com/MusicPlayerDaemon/MPD/blob/d663f81/src/command/PlayerCommands.cxx#L119-L129
 (defn current-state [mpv]
