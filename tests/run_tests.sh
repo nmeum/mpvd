@@ -14,7 +14,7 @@ for test in *; do
 
 	read -r fn < "${test}/song"
 	mpv --quiet --input-ipc-server="${testdir}/mpvsock" \
-		--pause "testdata/${fn}" >/dev/null &
+		--loop inf "testdata/${fn}" >/dev/null &
 
 	hy ../mpvd.hy -a "${MPVD_TEST_ADDR}" \
 		-p "${MPVD_TEST_PORT}" "${testdir}/mpvsock" &
