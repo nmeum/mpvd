@@ -52,4 +52,4 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 [mpd homepage]: https://musicpd.org/
 [mpd protocol]: https://musicpd.org/doc/html/protocol.html
 [libmpdserver github]: https://github.com/nmeum/libmpdserver
-[hy homepage]: https://hylang.org
+[hy homepage]: https://docs.hylang.org
