@@ -4,7 +4,7 @@ Control [mpv][mpv homepage] using the [MPD][mpd homepage] [protocol][mpd protoco
 
 ## Status
 
-A toy protect for playing around with [libmpdserver][libmpdserver github]
+A toy project for playing around with [libmpdserver][libmpdserver github]
 and the [hy][hy homepage] programming language. Buggy and totally
 incomplete at the moment.
 
