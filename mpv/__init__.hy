@@ -74,8 +74,13 @@
     (self.send-command "observe_property" id name)
     id)
 
-  (defn get-property [self name]
-    (self.send-command "get_property" name))
+  (defn get-property [self name &optional default]
+    (try
+      (self.send-command "get_property" name)
+      (except [e MPVException]
+        (if (and (= (str e) "property unavailable")
+                 (not (is None default)))
+          default (raise e)))))
 
   (defn set-property [self name value]
     (self.send-command "set_property" name value))
