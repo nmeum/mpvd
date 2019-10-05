@@ -26,5 +26,5 @@
 
   ;; Format: ACK [error@command_listNum] {current_command} message_text
   (defn __str__ [self]
-    (% "ACK [%s@%d] {%s} %s" (, self.code self.lst-num
+    (% "ACK [%d@%d] {%s} %s" (, self.code.value self.lst-num
                                 self.cur-cmd self.msg))))
