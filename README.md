@@ -30,8 +30,8 @@ Very simple interactions with `mpc` are possible, for example:
 
 	$ mpc --host localhost --port 6600
 	OpenBSD - Trial of the BSD Knights
-	[paused]  #0/1   0:00/0:00 (0%)
-	volume:100%   repeat: off   random: off   single: off   consume: off
+	[paused]  #1/1   0:03/3:04 (1%)
+	volume: 84%   repeat: off   random: off   single: off   consume: off
 
 ## License
 
