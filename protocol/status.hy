@@ -40,6 +40,10 @@
 (with-decorator (commands.add "status")
   (defn status [mpv cmd]
     (with [(same-song mpv)]
+      (setv [curtime maxtime] (,
+        (mpv.get-property "time-pos")
+        (mpv.get-property "duration")))
+
       ;; See https://github.com/MusicPlayerDaemon/MPD/blob/d663f81/src/command/PlayerCommands.cxx#L110
       {
         "volume"         (mpv.get-property "volume")
@@ -47,4 +51,11 @@
         "random"         (mpv.get-property "options/shuffle")
         "playlistlength" (mpv.get-property "playlist-count")
         "state"          (current-state mpv)
+        "song"           (mpv.get-property "playlist-pos")
+        "time"           (.format "{}:{}"
+                           (round curtime)
+                           (round maxtime))
+        "elapsed"        curtime
+        "duration"       maxtime
+        "bitrate"        (/ (mpv.get-property "audio-bitrate") 1000)
       })))
