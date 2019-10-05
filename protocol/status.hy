@@ -57,5 +57,5 @@
                            (round maxtime))
         "elapsed"        curtime
         "duration"       maxtime
-        "bitrate"        (/ (mpv.get-property "audio-bitrate") 1000)
+        "bitrate"        (/ (mpv.get-property "audio-bitrate" 0) 1000)
       })))
