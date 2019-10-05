@@ -9,7 +9,7 @@ mkdir -p "${testdir:=${TMPDIR:-/tmp}/mpvd-tests}"
 trap "rm -rf '${testdir}'" INT EXIT
 
 for test in *; do
-	[ -e "${test}/input" ] || continue
+	[ -e "${test}/opts" ] || continue
 	printf "Running test case '%s': " "${test##*/}"
 
 	read -r fn < "${test}/song"
@@ -21,7 +21,7 @@ for test in *; do
 
 	sleep 1
 
-	set -- $(cat "${test}/input")
+	set -- $(cat "${test}/opts")
 	mpc --host "${MPVD_TEST_ADDR}" --port "${MPVD_TEST_PORT}" \
 		"$@" 1>"${testdir}/output" 2>&1
 
