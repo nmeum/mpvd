@@ -12,7 +12,7 @@
     (setv self.socket (socket.socket socket.AF_UNIX
                                      socket.SOCK_STREAM))
     (self.socket.connect path)
-    (setv self.event-handlers {"property-change" self.handle-property})
+    (setv self.event-handlers {})
     (setv self.property-handlers {})
     (setv self.observe-id 1)
     (setv self.observe-lock (threading.Lock))
@@ -20,6 +20,7 @@
     (setv self.socket-lock (threading.Lock))
     (setv self.queue (MSGQueue))
     (setv self.thread (threading.Thread :target self.recv-thread))
+    (self.register-event "property-change" self.handle-property)
     (self.thread.start))
 
   (defn shutdown [self]
@@ -51,6 +52,9 @@
     (with [file (self.socket.makefile)]
       (for [input (iter file.readline "")]
         (self.handle-input input))))
+
+  (defn register-event [self name callable]
+    (assoc self.event-handlers name callable))
 
   (defn send-command [self name &rest params]
     (unless (isinstance name str)
