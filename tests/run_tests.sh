@@ -19,7 +19,7 @@ for test in *; do
 	hy ../mpvd.hy -a "${MPVD_TEST_ADDR}" \
 		-p "${MPVD_TEST_PORT}" "${testdir}/mpvsock" &
 
-	sleep 1
+	./wait_port.hy "${MPVD_TEST_ADDR}" "${MPVD_TEST_PORT}"
 
 	set -- $(cat "${test}/opts")
 	mpc --host "${MPVD_TEST_ADDR}" --port "${MPVD_TEST_PORT}" \
