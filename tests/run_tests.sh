@@ -16,7 +16,7 @@ for test in *; do
 	sock="${testdir}/mpvsock"
 
 	mpv --quiet --input-ipc-server="${sock}" \
-		--loop inf "testdata/${fn}" >/dev/null &
+		--pause --loop inf "testdata/${fn}" >/dev/null &
 	hy ../mpvd.hy -a "${MPVD_TEST_ADDR}" \
 		-p "${MPVD_TEST_PORT}" "${sock}" &
 
