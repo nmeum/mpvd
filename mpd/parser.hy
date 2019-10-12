@@ -12,7 +12,7 @@
     (setv self.end end))
 
   (defn infinite? [self]
-    (if self.end False True))
+    (not self.end))
 
   (defn to-range [self]
     (if (self.infinite?)
