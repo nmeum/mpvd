@@ -28,7 +28,7 @@ for test in *; do
 	env -i PATH="$(pwd):${PATH}" \
 		HOST="${MPVD_TEST_ADDR}" \
 		PORT="${MPVD_TEST_PORT}" \
-		OUT="${output}" sh "${test}/commands"
+		sh "${test}/commands" >> "${output}"
 
 	if ! cmp -s "${output}" "${test}/output"; then
 		printf "FAIL: Output didn't match.\n\n"
