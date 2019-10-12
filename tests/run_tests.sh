@@ -30,9 +30,12 @@ for test in *; do
 		PORT="${MPVD_TEST_PORT}" \
 		sh "${test}/commands" >> "${output}"
 
-	if ! cmp -s "${output}" "${test}/output"; then
+	expected="${testdir}/expected"
+	sed '/./!d' < "${test}/output" > "${expected}"
+
+	if ! cmp -s "${output}" "${expected}"; then
 		printf "FAIL: Output didn't match.\n\n"
-		diff -u "${output}" "${test}/output"
+		diff -u "${output}" "${expected}"
 		exit 1
 	fi
 
