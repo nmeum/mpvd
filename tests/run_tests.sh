@@ -6,7 +6,7 @@ export MPVD_TEST_ADDR="${MPVD_TEST_ADDR:-localhost}"
 export MPVD_TEST_PORT="${MPVD_TEST_PORT:-6600}"
 
 mkdir -p "${testdir:=${TMPDIR:-/tmp}/mpvd-tests}"
-trap "rm -rf '${testdir}'" INT EXIT
+trap "rm -rf '${testdir}' ; kill 0" INT EXIT
 
 for test in *; do
 	[ -e "${test}/opts" ] || continue
@@ -23,7 +23,7 @@ for test in *; do
 
 	set -- $(cat "${test}/opts")
 	mpc --host "${MPVD_TEST_ADDR}" --port "${MPVD_TEST_PORT}" \
-		"$@" 1>"${testdir}/output" 2>&1
+		--wait "$@" 1>"${testdir}/output" 2>&1
 
 	if ! cmp -s "${testdir}/output" "${test}/output"; then
 		printf "FAIL: Output didn't match.\n\n"
