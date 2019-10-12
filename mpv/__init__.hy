@@ -1,4 +1,5 @@
 (import socket json threading
+  [collections [defaultdict]]
   [mpv.queue [MSGQueue]]
   [mpv.message [ServerMsg ClientMsg]])
 (require [hy.contrib.walk [let]])
@@ -12,7 +13,7 @@
     (setv self.socket (socket.socket socket.AF_UNIX
                                      socket.SOCK_STREAM))
     (self.socket.connect path)
-    (setv self.event-handlers {})
+    (setv self.event-handlers (defaultdict list))
     (setv self.property-handlers {})
     (setv self.observe-id 1)
     (setv self.observe-lock (threading.Lock))
@@ -40,7 +41,8 @@
   (defn handle-event [self msg]
     (let [name (get msg.dict "event")]
       (if (in name self.event-handlers)
-        ((get self.event-handlers name) msg))))
+        (for [h (get self.event-handlers name)]
+          (h msg)))))
 
   (defn handle-input [self input]
     (let [msg (ServerMsg input)]
@@ -54,7 +56,7 @@
         (self.handle-input input))))
 
   (defn register-event [self name callable]
-    (assoc self.event-handlers name callable))
+    (.append (get self.event-handlers name) callable))
 
   (defn send-command [self name &rest params]
     (unless (isinstance name str)
