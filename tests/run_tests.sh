@@ -9,25 +9,30 @@ mkdir -p "${testdir:=${TMPDIR:-/tmp}/mpvd-tests}"
 trap "rm -rf '${testdir}' ; kill 0" INT EXIT
 
 for test in *; do
-	[ -e "${test}/opts" ] || continue
+	[ -e "${test}/commands" ] || continue
 	printf "Running test case '%s': " "${test##*/}"
 
 	read -r fn < "${test}/song"
-	mpv --quiet --input-ipc-server="${testdir}/mpvsock" \
-		--loop inf "testdata/${fn}" >/dev/null &
+	sock="${testdir}/mpvsock"
 
+	mpv --quiet --input-ipc-server="${sock}" \
+		--loop inf "testdata/${fn}" >/dev/null &
 	hy ../mpvd.hy -a "${MPVD_TEST_ADDR}" \
-		-p "${MPVD_TEST_PORT}" "${testdir}/mpvsock" &
+		-p "${MPVD_TEST_PORT}" "${sock}" &
 
 	./wait_port.hy "${MPVD_TEST_ADDR}" "${MPVD_TEST_PORT}"
 
-	set -- $(cat "${test}/opts")
-	mpc --host "${MPVD_TEST_ADDR}" --port "${MPVD_TEST_PORT}" \
-		--wait "$@" 1>"${testdir}/output" 2>&1
+	output="${testdir}/output"
+	printf "" > "${output}"
 
-	if ! cmp -s "${testdir}/output" "${test}/output"; then
+	env -i PATH="$(pwd):${PATH}" \
+		HOST="${MPVD_TEST_ADDR}" \
+		PORT="${MPVD_TEST_PORT}" \
+		OUT="${output}" sh "${test}/commands"
+
+	if ! cmp -s "${output}" "${test}/output"; then
 		printf "FAIL: Output didn't match.\n\n"
-		diff -u "${testdir}/output" "${test}/output"
+		diff -u "${output}" "${test}/output"
 		exit 1
 	fi
 

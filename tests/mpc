@@ -1,0 +1,5 @@
+#!/bin/sh
+
+export PATH="/usr/bin:/usr/local/bin"
+mpc --host "${HOST}" --port "${PORT}" \
+	--wait "$@" 1>>"${OUT}" 2>&1
