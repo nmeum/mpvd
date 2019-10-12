@@ -62,7 +62,8 @@
   (defn unregister-event [self callable]
     (setv self.event-handlers
       (dfor (, key value) (.items self.event-handlers)
-        [key (if (not (= value callable)) value)])))
+        :if (!= key callable)
+        [key value])))
 
   (defn send-command [self name &rest params]
     (unless (isinstance name str)
