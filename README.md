@@ -28,7 +28,7 @@ Afterwards, start mpvd using:
 
 Very simple interactions with `mpc` are possible, for example:
 
-	$ mpc --host localhost --port 6600
+	$ mpc --host localhost --port 6600 pause
 	OpenBSD - Trial of the BSD Knights
 	[paused]  #1/1   0:03/3:04 (1%)
 	volume: 84%   repeat: off   random: off   single: off   consume: off
