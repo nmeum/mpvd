@@ -56,7 +56,13 @@
         (self.handle-input input))))
 
   (defn register-event [self name callable]
-    (.append (get self.event-handlers name) callable))
+    (.append (get self.event-handlers name) callable)
+    (get self.event-handlers name))
+
+  (defn unregister-event [self callable]
+    (setv self.event-handlers
+      (dfor (, key value) (.items self.event-handlers)
+        [key (if (not (= value callable)) value)])))
 
   (defn send-command [self name &rest params]
     (unless (isinstance name str)
