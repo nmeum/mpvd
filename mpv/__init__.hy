@@ -97,6 +97,7 @@
   (defn set-property [self name value]
     (self.send-command "set_property" name value))
 
+  ;; TODO: pass handler instead of id as argument
   (defn unobserve-property [self id]
     (self.send-command "unobserve_property" id)
     (del (get self.property-handlers id))))
