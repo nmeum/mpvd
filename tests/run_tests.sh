@@ -23,10 +23,8 @@ for test in *; do
 	./wait_port.hy "${MPVD_TEST_ADDR}" "${MPVD_TEST_PORT}"
 
 	output="${testdir}/output"
-	printf "" > "${output}"
-
 	env -i HOST="${MPVD_TEST_ADDR}" PORT="${MPVD_TEST_PORT}" \
-		PATH="$(pwd):${PATH}" sh "${test}/commands" >> "${output}"
+		PATH="$(pwd):${PATH}" sh "${test}/commands" > "${output}"
 
 	expected="${testdir}/expected"
 	sed "/./!d" < "${test}/output" > "${expected}"
