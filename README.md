@@ -33,6 +33,10 @@ Very simple interactions with [mpc][mpc homepage] are possible, for example:
 	[paused]  #1/1   0:03/3:04 (1%)
 	volume: 84%   repeat: off   random: off   single: off   consume: off
 
+If [mpc][mpc homepage] is installed test can be invoked using:
+
+	$ ./tests/run_tests.sh
+
 ## License
 
 This program is free software: you can redistribute it and/or modify it
