@@ -26,7 +26,7 @@ Afterwards, start mpvd using:
 
 ## Usage
 
-Very simple interactions with `mpc` are possible, for example:
+Very simple interactions with [mpc][mpc homepage] are possible, for example:
 
 	$ mpc --host localhost --port 6600 pause
 	OpenBSD - Trial of the BSD Knights
@@ -53,3 +53,4 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 [mpd protocol]: https://musicpd.org/doc/html/protocol.html
 [libmpdserver github]: https://github.com/nmeum/libmpdserver
 [hy homepage]: https://docs.hylang.org
+[mpc homepage]: https://www.musicpd.org/clients/mpc/
